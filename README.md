@@ -1,5 +1,7 @@
 # Loop Fusion
 
+[![CircleCI](https://circleci.com/gh/loop-fusion/loop-fusion.svg?style=svg)](https://circleci.com/gh/loop-fusion/loop-fusion)
+
 `loop_fusion` is a header-only library for merging multiple loop bodies of equal or different ranges for more efficient execution that can benefit from CPU caching.
 
 For more detailed information, please refer to the [documentation](docs/) and the [presentation slides](docs/LoopFusionPresentation.pdf).
