@@ -30,7 +30,7 @@ jobs:
           name: test_address_sanitizer
           command: |
             echo "GCC9 $(which g++-9)"
-            mkdir build && cd $_
+            mkdir build_test_address_sanitizer && cd $_
             cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$(which g++-9) -DSANITIZE_ADDRESS=ON ..
             make -j2 loop_fusion_test
             make test
@@ -38,7 +38,7 @@ jobs:
           name: test_undefined_behavior_sanitizer
           command: |
             echo "GCC9 $(which g++-9)"
-            mkdir build && cd $_
+            mkdir build_test_undefined_behavior_sanitizer && cd $_
             cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$(which g++-9) -DSANITIZE_UNDEFINED=ON ..
             make -j2 loop_fusion_test
             make test
@@ -47,7 +47,7 @@ jobs:
           command: |
             export CXX=clang++
             export CC=clang
-            mkdir build && cd $_
+            mkdir build_test_clang && cd $_
             cmake -DCMAKE_BUILD_TYPE=Debug ..
             make -j2 loop_fusion_test
             make test
@@ -57,7 +57,7 @@ jobs:
             echo "Test installation target and examples"
             echo "GCC9 $(which g++-9)"
             cmake --version
-            mkdir build && cd build
+            mkdir build_test_installation && cd $_
             INSTALL_PREFIX="$(pwd)/install_prefix"
             cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$(which g++-9) -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DFUSION_BUILD_TEST=OFF ..
             cmake --build . --config Release --target install
@@ -79,7 +79,7 @@ jobs:
           name: coverage
           command: |
             echo "GCC9 $(which g++-9)"
-            mkdir build && cd $_
+            mkdir build_coverage && cd $_
             cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$(which g++-9) -DFUSION_ENABLE_COVERAGE=ON ..
             cmake --build . -j 2
             cmake --build . -j 2 --target coverage
