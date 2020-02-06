@@ -44,7 +44,7 @@ make test         # Run all tests (`ctest` works as well)
 ### Linux & macOS
 
 ```sh
-cd 11-loop-fusion-i
+cd loop-fusion
 mkdir build && cd $_
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 make -j$(nproc)

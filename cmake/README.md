@@ -3,7 +3,7 @@
 This file lists all CMake modules and third party licenses that are used in this project.
 
 `MiscFunctions.cmake`  
- - custom implementation (`11-loop-fusion-i`)
+ - custom implementation (`loop_fusion`)
 
  `FindASan.cmake`  
  `FindMSan.cmake`  

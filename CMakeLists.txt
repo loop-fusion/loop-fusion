@@ -7,7 +7,7 @@ project(
   VERSION 0.1.0
   DESCRIPTION "C++ Loop Fusion"
   HOMEPAGE_URL
-    "https://mp-force.ziti.uni-heidelberg.de/asc/projects/lectures/cpp-practice/WS19/11-loop-fusion-i"
+    "https://github.com/loop-fusion/loop-fusion"
   LANGUAGES CXX
 )
 
