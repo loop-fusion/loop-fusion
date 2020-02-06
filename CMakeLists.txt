@@ -6,8 +6,7 @@ project(
   "loop_fusion"
   VERSION 0.1.0
   DESCRIPTION "C++ Loop Fusion"
-  HOMEPAGE_URL
-    "https://github.com/loop-fusion/loop-fusion"
+  HOMEPAGE_URL "https://github.com/loop-fusion/loop-fusion"
   LANGUAGES CXX
 )
 
