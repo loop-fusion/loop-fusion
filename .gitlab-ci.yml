@@ -1,0 +1,112 @@
+# CI configuration for 11-loop-fusion-i
+
+image: registry.gitlab.com/bugwelle/docker-modern-cpp-cmake:master
+
+stages:
+  - check
+  - test
+  - install
+
+clang_format:
+  stage: check
+  script:
+    - ./tools/run_clang_format.sh
+    - git diff --diff-filter=M --color | cat
+    - git diff --diff-filter=M --quiet || (echo "Found unformatted files! Use clang-format!"; exit 1)
+
+cmake_format:
+  stage: check
+  script:
+    - ./tools/run_cmake_format.sh
+    - git diff --diff-filter=M --color | cat
+    - git diff --diff-filter=M --quiet || (echo "Found unformatted CMakeLists.txt! Use cmake-format!"; exit 1)
+
+cppcheck:
+  stage: check
+  script:
+    - ./tools/run_cppcheck.sh
+  allow_failure: true
+
+clang_tidy:
+  stage: test
+  script:
+    - ./tools/build_run_clang_tidy.sh
+    - git diff --diff-filter=M --color | cat
+    - git diff --diff-filter=M --quiet || (echo "Found fixable errors! Use clang-tidy!"; exit 1)
+
+test_address_sanitizer:
+  stage: test
+  script:
+    - echo "GCC9 $(which g++-9)"
+    - mkdir build && cd $_
+    - cmake -DCMAKE_BUILD_TYPE=Debug
+        -DCMAKE_CXX_COMPILER=$(which g++-9)
+        -DSANITIZE_ADDRESS=ON
+        ..
+    - make -j2 loop_fusion_test
+    - make test
+
+test_undefined_behavior_sanitizer:
+  stage: test
+  script:
+    - echo "GCC9 $(which g++-9)"
+    - mkdir build && cd $_
+    - cmake -DCMAKE_BUILD_TYPE=Debug
+        -DCMAKE_CXX_COMPILER=$(which g++-9)
+        -DSANITIZE_UNDEFINED=ON
+        ..
+    - make -j2 loop_fusion_test
+    - make test
+
+test_clang:
+  stage: test
+  script:
+    - export CXX=clang++
+    - export CC=clang
+    - mkdir build && cd $_
+    - cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - make -j2 loop_fusion_test
+    - make test
+
+test_installation:
+  stage: test
+  script:
+    - echo "Test installation target and examples"
+    - echo "GCC9 $(which g++-9)"
+    - cmake --version
+    - mkdir build && cd build
+    - INSTALL_PREFIX="$(pwd)/install_prefix"
+    - cmake -DCMAKE_BUILD_TYPE=Debug
+        -DCMAKE_CXX_COMPILER=$(which g++-9)
+        -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}
+        -DFUSION_BUILD_TEST=OFF
+        ..
+    - cmake --build . --config Release --target install
+    - echo "Installed Loop Fusion"
+    - cd ../examples
+    - mkdir build && cd build
+    - BUILD_DIR=$(pwd);
+    - for dir in $(/bin/ls ..); do
+        if [[ -d "${BUILD_DIR}/../$dir" ]] && [[ $dir != "build" ]]; then
+          cd $BUILD_DIR;
+          echo "";
+          echo "";
+          echo "Building example '${dir}' (path is $(pwd))";
+          mkdir "${dir}" && cd "${dir}";
+          cmake "${BUILD_DIR}/../${dir}" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} &&
+            cmake --build . --config Release || exit 1;
+        fi;
+      done
+
+coverage:
+  stage: install
+  script:
+    - echo "GCC9 $(which g++-9)"
+    - mkdir build && cd $_
+    - cmake -DCMAKE_BUILD_TYPE=Debug
+        -DCMAKE_CXX_COMPILER=$(which g++-9)
+        -DFUSION_ENABLE_COVERAGE=ON
+        ..
+    - cmake --build . -j 2
+    - cmake --build . -j 2 --target coverage
+
