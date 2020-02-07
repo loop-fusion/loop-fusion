@@ -90,7 +90,7 @@ jobs:
       - checkout
       - run: pip install pcpp
       - run: ./tools/build_single_file_header.sh > loop_fusion.hpp
-      - store_artifats:
+      - store_artifacts:
           path: loop_fusion.hpp
 
 workflows:
