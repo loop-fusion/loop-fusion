@@ -83,41 +83,9 @@ jobs:
             cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$(which g++-9) -DFUSION_ENABLE_COVERAGE=ON ..
             cmake --build . -j 2
             cmake --build . -j 2 --target coverage
-  build:
-    docker:
-      - image: circleci/python:3.8
-    steps:
-      - checkout
-      - run: pip install pcpp
-      - run: mkdir build && ./tools/build_single_file_header.sh > build/loop_fusion.hpp
-      - persist_to_workspace:
-          root: ./build
-          paths:
-            - loop_fusion.hpp
-  publish-github-release:
-    docker:
-      - image: cibuilds/github:0.13
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ./build
-      - run: git describe --tags
-      - run: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete $(git describe --tags) ./build
 
 workflows:
   version: 2
   main:
     jobs:
       - test
-      - build:
-          filters:
-            tags:
-              only: /^v.*/
-      - publish-github-release:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
