@@ -83,9 +83,19 @@ jobs:
             cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$(which g++-9) -DFUSION_ENABLE_COVERAGE=ON ..
             cmake --build . -j 2
             cmake --build . -j 2 --target coverage
+  build:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run: pip install pcpp
+      - run: ./tools/build_single_file_header.sh > loop_fusion.hpp
+      - store_artifats:
+          path: loop_fusion.hpp
 
 workflows:
   version: 2
   main:
     jobs:
       - test
+      - build
