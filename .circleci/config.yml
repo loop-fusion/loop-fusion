@@ -96,7 +96,7 @@ jobs:
             - loop_fusion.hpp
   publish-github-release:
     docker:
-      -image: cibuilds/github:0.13
+      - image: cibuilds/github:0.13
     steps:
       - attach_workspace:
           at: artifacts
