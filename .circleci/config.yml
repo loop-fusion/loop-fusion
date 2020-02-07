@@ -88,7 +88,12 @@ jobs:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - run:
-          command: |
-            pip install pcpp
-            ./tools/build_single_file_header.sh
+      - run: pip install pcpp
+      - run: ./tools/build_single_file_header.sh
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - build
