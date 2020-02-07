@@ -91,16 +91,17 @@ jobs:
       - run: pip install pcpp
       - run: mkdir build && ./tools/build_single_file_header.sh > build/loop_fusion.hpp
       - persist_to_workspace:
-          root: build
+          root: ./build
           paths:
             - loop_fusion.hpp
   publish-github-release:
     docker:
       - image: cibuilds/github:0.13
     steps:
+      - checkout
       - attach_workspace:
-          at: artifacts
-      - run: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} ./artifacts/
+          at: ./build
+      - run: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} $(git describe --tags) ./build
 
 workflows:
   version: 2
@@ -110,7 +111,7 @@ workflows:
       - build:
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+$/
+              only: /^v.*/
       - publish-github-release:
           requires:
             - build
@@ -118,4 +119,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^v\d+\.\d+\.\d+$/
+              only: /^v.*/
