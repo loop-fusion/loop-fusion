@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  test:
     docker:
       - image: registry.gitlab.com/bugwelle/docker-modern-cpp-cmake:master
     steps:
@@ -83,3 +83,12 @@ jobs:
             cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$(which g++-9) -DFUSION_ENABLE_COVERAGE=ON ..
             cmake --build . -j 2
             cmake --build . -j 2 --target coverage
+  build:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run:
+          command: |
+            pip install pcpp
+            ./tools/build_single_file_header.sh
