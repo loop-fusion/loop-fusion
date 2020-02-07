@@ -101,7 +101,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./build
-      - run: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} $(git describe --tags) ./build
+      - run: git describe --tags
+      - run: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete $(git describe --tags) ./build
 
 workflows:
   version: 2
